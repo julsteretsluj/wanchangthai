@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wan Chang Thai — Protect the Elephant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Itim&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="sky"></div>
+  <div class="ground"></div>
+
+  <header class="header">
+    <div class="lang-switcher" id="langSwitcher">
+      <button type="button" class="lang-btn active" data-lang="en" aria-pressed="true">EN</button>
+      <button type="button" class="lang-btn" data-lang="th" aria-pressed="false">ไทย</button>
+    </div>
+    <h1>Wan Chang Thai</h1>
+    <p class="tagline" data-i18n="tagline">Protect ช้าง — feed, care & love your elephant</p>
+    <button type="button" class="leaderboard-btn" id="leaderboardBtn" aria-label="Leaderboard" data-i18n-title="leaderboardTitle">🏆</button>
+    <div class="level-display" id="levelDisplay">
+      <span class="level-label"><span data-i18n="levelLabel">Level</span> <strong id="levelNum">1</strong></span>
+      <span class="level-place" id="levelPlace">Chiang Mai</span>
+      <span class="level-progress" id="levelProgress" data-i18n-sub="threatsProgress">0 / 3 threats</span>
+    </div>
+    <div class="journey-map" id="journeyMap" aria-label="Journey map">
+      <div class="map-thailand" id="mapThailand">
+        <!-- Markers added by JS -->
+      </div>
+    </div>
+    <div class="merit-display" id="meritDisplay">
+      <span class="merit-label" data-i18n="meritLabel">Merit</span> <strong id="meritVal">0</strong>
+      <span class="rank-badge" id="rankDisplay">Local Worker</span>
+    </div>
+    <div class="resources">
+      <span class="resource" id="money">💰 <strong id="moneyVal">35</strong></span>
+      <span class="resource" id="food">🍌 <strong id="foodVal">3</strong></span>
+    </div>
+  </header>
+
+  <!-- Name your elephant (shown before game) -->
+  <div class="name-modal" id="nameModal">
+    <div class="name-modal-inner">
+      <h2 data-i18n="nameModalTitle">Name your elephant</h2>
+      <p class="name-hint" data-i18n="nameHint">ช้าง — your elephant needs a name.</p>
+      <form class="name-form" id="nameForm">
+        <input type="text" id="elephantNameInput" data-i18n-placeholder="namePlaceholder" placeholder="e.g. Wan Chang Thai" maxlength="30" value="Wan Chang Thai" />
+        <button type="submit" class="btn btn-love" data-i18n="startBtn">Start</button>
+      </form>
+    </div>
+  </div>
+
+  <main class="game hidden" id="gameMain">
+    <section class="scales-panel">
+      <h2 data-i18n="yourElephant">Your elephant</h2>
+      <div class="scale-row">
+        <label for="loveBar">❤️ <span data-i18n="love">Love</span></label>
+        <div class="bar-wrap"><div class="bar love" id="loveBar" style="width: 80%"></div></div>
+        <span class="val" id="loveVal">80</span>
+      </div>
+      <div class="scale-row">
+        <label for="hungerBar">🍃 <span data-i18n="hunger">Hunger</span></label>
+        <div class="bar-wrap"><div class="bar hunger" id="hungerBar" style="width: 70%"></div></div>
+        <span class="val" id="hungerVal">70</span>
+      </div>
+      <div class="scale-row">
+        <label for="healthBar">💚 <span data-i18n="health">Health</span></label>
+        <div class="bar-wrap"><div class="bar health" id="healthBar" style="width: 90%"></div></div>
+        <span class="val" id="healthVal">90</span>
+      </div>
+    </section>
+
+    <section class="elephant-area">
+      <div class="scene" id="scene">
+        <div class="flying-bananas" id="flyingBananas" aria-label="Click bananas to collect"></div>
+        <div class="threat-figures" id="threatFigures">
+          <div class="threat-figure threat-left" id="threat1" aria-hidden="true"></div>
+          <div class="threat-figure threat-right" id="threat2" aria-hidden="true"></div>
+        </div>
+        <div class="elephant-container" id="elephantContainer">
+          <div class="elephant" id="elephant" aria-hidden="true">
+            <img src="assets/elephant.png" alt="" class="elephant-img" />
+          </div>
+          <div class="bubble" id="bubble"></div>
+        </div>
+      </div>
+      <p class="elephant-name" id="elephantNameDisplay">Wan Chang Thai</p>
+    </section>
+
+    <section class="actions-panel">
+      <h2 data-i18n="careForElephant">Care for your elephant</h2>
+      <div class="action-buttons" id="actionButtons">
+        <button type="button" class="btn btn-feed" id="btnFeed" data-i18n="feedBtn" data-i18n-title="feedTitle">🍌 Feed</button>
+        <button type="button" class="btn btn-buy" id="btnBuyBananas" data-i18n="buyBananasBtn" data-i18n-title="buyBananasTitle">🛒 Buy 🍌</button>
+        <button type="button" class="btn btn-care" id="btnCare" data-i18n="careBtn">🩹 Care</button>
+        <button type="button" class="btn btn-love" id="btnLove" data-i18n="loveBtn">❤️ Love</button>
+        <button type="button" class="btn btn-pause" id="btnPause" data-i18n="pauseBtn">⏸ Pause</button>
+        <button type="button" class="btn btn-restart" id="btnRestart" data-i18n="restartBtn">🔄 Restart</button>
+      </div>
+    </section>
+
+    <!-- Pause overlay (shown when game is paused) -->
+    <div class="pause-overlay hidden" id="pauseOverlay">
+      <div class="pause-overlay-inner">
+        <p class="pause-title" data-i18n="pauseTitle">Game paused</p>
+        <div class="pause-overlay-buttons">
+          <button type="button" class="btn btn-love" id="btnResume" data-i18n="resumeBtn">▶ Resume</button>
+          <button type="button" class="btn btn-restart" id="btnRestartOverlay" data-i18n="restartBtn">🔄 Restart</button>
+        </div>
+      </div>
+    </div>
+
+    <section class="threat-panel hidden" id="threatPanel">
+      <div class="threat-alert">
+        <span class="threat-icon" aria-hidden="true">⚠️</span>
+        <p id="threatAlertText">Threat approaching!</p>
+      </div>
+      <div class="threat-actions" id="threatActions"></div>
+    </section>
+
+    <section class="message-area" id="messageArea" aria-live="polite"></section>
+  </main>
+
+  <!-- Leaderboard modal -->
+  <div class="leaderboard-modal hidden" id="leaderboardModal">
+    <div class="leaderboard-inner">
+      <h2 data-i18n="leaderboardTitle">Leaderboard</h2>
+      <p class="leaderboard-hint" data-i18n="leaderboardHint">Top players by merit. Play to save your score!</p>
+      <div class="leaderboard-list" id="leaderboardList">
+        <p class="leaderboard-loading" id="leaderboardLoading">Loading…</p>
+      </div>
+      <p class="leaderboard-disabled hidden" id="leaderboardDisabled" data-i18n="leaderboardDisabled">Connect Firebase to enable the leaderboard. See firebase-config.js</p>
+      <button type="button" class="btn btn-love" id="leaderboardClose" data-i18n="closeBtn">Close</button>
+    </div>
+  </div>
+
+  <!-- Level complete overlay -->
+  <div class="level-complete hidden" id="levelCompleteModal">
+    <div class="level-complete-inner">
+      <h2 data-i18n="levelCompleteTitle">Level complete!</h2>
+      <p id="levelCompleteText">You protected your elephant. Get ready for the next wave.</p>
+      <button type="button" class="btn btn-love" id="btnNextLevel" data-i18n="nextLevelBtn">Next level</button>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p data-i18n="footerText">Defeat the required number of threats each level to advance. Keep Love, Hunger & Health high.</p>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="firebase-leaderboard.js"></script>
+  <script src="i18n.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

@@ -145,7 +145,7 @@ function showPlaceIntro(level) {
   const place = getPlaceForLevel(level);
   const introKey = place.key + '_intro';
   const intro = t(introKey);
-  if (intro !== introKey) showMessage(intro, 'neutral', 5500);
+  if (intro !== introKey) showMessage(intro, 'neutral', 0);
 }
 
 window.__wanchangthai_lang = state.lang;
@@ -341,7 +341,7 @@ function showMessage(text, type = 'neutral', durationMs = 3200) {
   textSpan.textContent = text;
   msg.appendChild(textSpan);
   el.messageArea.appendChild(msg);
-  setTimeout(() => msg.remove(), durationMs);
+  if (durationMs > 0) setTimeout(() => msg.remove(), durationMs);
 }
 
 function showBubble(emoji) {

@@ -337,11 +337,14 @@ body {
 }
 
 .leaderboard-loading,
+.leaderboard-loading,
 .leaderboard-empty {
   text-align: center;
   color: var(--text-soft);
   padding: 1.5rem;
-  margin: 0;
+}
+.leaderboard-error {
+  color: var(--bad, #c33);
 }
 
 .leaderboard-disabled {

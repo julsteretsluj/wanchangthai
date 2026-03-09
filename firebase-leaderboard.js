@@ -54,10 +54,10 @@
 
     async getLeaderboard() {
       try {
+        // Single orderBy avoids composite index requirement; secondary sort done in JS
         const snapshot = await db
           .collection(LEADERBOARD_COLLECTION)
           .orderBy('merit', 'desc')
-          .orderBy('createdAt', 'desc')
           .limit(200)
           .get();
 
@@ -73,22 +73,25 @@
             merit: d.merit || 0,
             level: d.level || 1,
             threatsDefeated: d.threatsDefeated || 0,
+            createdAt: d.createdAt ? d.createdAt.toMillis ? d.createdAt.toMillis() : 0 : 0,
           };
           const existing = byName.get(key);
           if (!existing || entry.merit > existing.merit ||
-              (entry.merit === existing.merit && entry.level > existing.level)) {
+              (entry.merit === existing.merit && entry.level > existing.level) ||
+              (entry.merit === existing.merit && entry.level === existing.level && entry.createdAt > existing.createdAt)) {
             byName.set(key, entry);
           }
         }
 
         const unique = Array.from(byName.values())
-          .sort((a, b) => b.merit - a.merit || b.level - a.level)
+          .sort((a, b) => b.merit - a.merit || b.level - a.level || b.createdAt - a.createdAt)
           .slice(0, LEADERBOARD_LIMIT);
 
         return unique.map((e, i) => ({ ...e, rank: i + 1 }));
       } catch (err) {
-        console.warn('Leaderboard fetch failed:', err);
-        return [];
+        console.error('Leaderboard fetch failed:', err.message || err);
+        if (err.code) console.error('Firebase code:', err.code, '- Check Firestore rules allow read.');
+        return { _error: err.message || String(err), _code: err.code };
       }
     },
   };

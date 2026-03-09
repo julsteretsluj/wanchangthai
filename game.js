@@ -86,7 +86,7 @@ const THREATS = {
     icon: '⚠️',
     approachKey: 'poacher_approach',
     strikeKey: 'poacher_strike',
-    damage: { love: 15, hunger: 10, health: 25 },
+    damage: { love: 22, hunger: 14, health: 32 },
     actions: [
       { id: 'pay', labelKey: 'poacher_pay_label', costMoney: 40, costFood: 0, resolveKey: 'poacher_pay_resolve' },
       { id: 'food', labelKey: 'poacher_food_label', costMoney: 0, costFood: 2, resolveKey: 'poacher_food_resolve' },
@@ -96,7 +96,7 @@ const THREATS = {
     icon: '📷',
     approachKey: 'tourist_approach',
     strikeKey: 'tourist_strike',
-    damage: { love: 22, hunger: 0, health: 8 },
+    damage: { love: 28, hunger: 0, health: 14 },
     actions: [
       { id: 'ask', labelKey: 'tourist_ask_label', costMoney: 0, costFood: 0, resolveKey: 'tourist_ask_resolve' },
       { id: 'tour', labelKey: 'tourist_tour_label', costMoney: 25, costFood: 0, resolveKey: 'tourist_tour_resolve' },
@@ -106,7 +106,7 @@ const THREATS = {
     icon: '🫂',
     approachKey: 'civilian_approach',
     strikeKey: 'civilian_strike',
-    damage: { love: 12, hunger: 15, health: 12 },
+    damage: { love: 8, hunger: 10, health: 8 },
     actions: [
       { id: 'give_food', labelKey: 'civilian_food_label', costMoney: 0, costFood: 1, resolveKey: 'civilian_food_resolve' },
       { id: 'give_money', labelKey: 'civilian_money_label', costMoney: 10, costFood: 0, resolveKey: 'civilian_money_resolve' },
@@ -632,10 +632,13 @@ async function manualSave() {
 
 async function refreshLeaderboardList() {
   if (!el.leaderboardList || typeof window.wanchangthaiLeaderboard === 'undefined' || !window.wanchangthaiLeaderboard.getLeaderboard) return;
-  const scores = await window.wanchangthaiLeaderboard.getLeaderboard();
-  if (scores.length === 0) {
+  const result = await window.wanchangthaiLeaderboard.getLeaderboard();
+  if (result && result._error) {
+    el.leaderboardList.innerHTML = '<p class="leaderboard-empty leaderboard-error">' + t('leaderboardLoadError') + '</p>';
+  } else if (!result || result.length === 0) {
     el.leaderboardList.innerHTML = '<p class="leaderboard-empty">' + t('leaderboardEmpty') + '</p>';
   } else {
+    const scores = result;
     el.leaderboardList.innerHTML = scores
       .map(
         (s) =>

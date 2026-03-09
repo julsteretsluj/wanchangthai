@@ -14,8 +14,7 @@
  * 4. Replace the placeholder below with your config
  * 5. Enable Anonymous Authentication: Authentication → Sign-in method → Anonymous → Enable
  * 6. Create Firestore Database: Firestore Database → Create database → Start in test mode (or use rules below)
- * 7. Create composite index - when you first load the leaderboard, Firestore may show an error
- *    with a link to create the required index (merit desc, createdAt desc). Click it to create.
+ * 7. No composite index needed — the leaderboard query uses a single orderBy.
  *
  * 8. (Optional) Firestore rules for leaderboard - in Firestore → Rules:
  *

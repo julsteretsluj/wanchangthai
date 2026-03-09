@@ -193,6 +193,7 @@ const el = {
   mapThailand: document.getElementById('mapThailand'),
   levelCompleteModal: document.getElementById('levelCompleteModal'),
   levelCompleteText: document.getElementById('levelCompleteText'),
+  levelCompleteSaveNote: document.getElementById('levelCompleteSaveNote'),
   btnNextLevel: document.getElementById('btnNextLevel'),
   meritDisplay: document.getElementById('meritDisplay'),
   meritVal: document.getElementById('meritVal'),
@@ -441,6 +442,7 @@ function completeLevel() {
   if (state.flyingBananaTimer) clearTimeout(state.flyingBananaTimer);
   state.flyingBananaTimer = null;
   if (el.flyingBananas) el.flyingBananas.innerHTML = '';
+  saveToLeaderboard();
   if (el.levelCompleteModal) el.levelCompleteModal.classList.remove('hidden');
   if (el.levelCompleteText) {
     const nextPlace = getPlaceForLevel(state.level + 1);
@@ -450,6 +452,11 @@ function completeLevel() {
       level: state.level + 1,
       place: t(nextPlace.key),
     });
+  }
+  if (el.levelCompleteSaveNote) {
+    const hasLeaderboard = typeof window.wanchangthaiLeaderboard !== 'undefined' && window.wanchangthaiLeaderboard.saveScore;
+    el.levelCompleteSaveNote.classList.toggle('hidden', !hasLeaderboard);
+    if (hasLeaderboard) el.levelCompleteSaveNote.textContent = t('levelCompleteSaveNote');
   }
   updateUI();
 }

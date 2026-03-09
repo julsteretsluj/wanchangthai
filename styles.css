@@ -419,6 +419,19 @@ body {
   line-height: 1.4;
 }
 
+.level-complete-save-note {
+  font-size: 0.9rem;
+  color: var(--health);
+  background: rgba(42, 157, 143, 0.12);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.25rem;
+}
+
+.level-complete-save-note.hidden {
+  display: none;
+}
+
 .name-modal-inner {
   background: var(--panel-bg);
   border: 3px solid var(--panel-border);

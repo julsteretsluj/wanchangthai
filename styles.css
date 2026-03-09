@@ -482,11 +482,65 @@ body {
 .game {
   position: relative;
   z-index: 1;
-  max-width: 720px;
+  max-width: 960px;
   margin: 0 auto 2rem;
   padding: 0 1rem;
   display: grid;
+  grid-template-columns: 1fr minmax(200px, 260px);
   gap: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 700px) {
+  .game {
+    grid-template-columns: 1fr;
+    max-width: 540px;
+  }
+  .care-sidebar {
+    order: -1;
+  }
+}
+
+.game-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.care-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: sticky;
+  top: 1rem;
+}
+
+.care-sidebar .scales-panel,
+.care-sidebar .actions-panel {
+  margin: 0;
+}
+
+.care-sidebar .scale-row {
+  grid-template-columns: 70px 1fr 2rem;
+  margin-bottom: 0.4rem;
+}
+
+.care-sidebar .scale-row label {
+  font-size: 0.85rem;
+}
+
+.care-sidebar .bar-wrap {
+  height: 16px;
+}
+
+.care-sidebar .action-buttons {
+  flex-direction: column;
+}
+
+.care-sidebar .btn {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
 }
 
 .game.hidden {
@@ -670,7 +724,7 @@ body {
 
 .scene.threats-approaching .threat-figure {
   opacity: 1;
-  transition: left 5.5s linear, right 5.5s linear, opacity 0.3s;
+  transition: left 3.5s linear, right 3.5s linear, opacity 0.3s;
 }
 
 .scene.threats-approaching .threat-left {

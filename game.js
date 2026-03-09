@@ -27,11 +27,11 @@ const state = {
 };
 
 const CONFIG = {
-  decayRate: 0.7,
-  decayIntervalMs: 1500,
-  threatIntervalMin: 6000,
-  threatIntervalMax: 13000,
-  threatWarningMs: 7000,
+  decayRate: 1.0,
+  decayIntervalMs: 1100,
+  threatIntervalMin: 3500,
+  threatIntervalMax: 7500,
+  threatWarningMs: 4500,
   levelBonusLove: 8,
   levelBonusHunger: 8,
   levelBonusHealth: 8,
@@ -47,16 +47,16 @@ const CONFIG = {
   maxScale: 100,
   startMoney: 35,
   startFood: 3,
-  foodGainInterval: 35000,
-  moneyGainInterval: 14000,
+  foodGainInterval: 22000,
+  moneyGainInterval: 9000,
   moneyGain: 5,
   foodGain: 1,
   meritPerThreatResolved: 12,
   meritPerCareAction: 2,
   bananaCost: 12,
-  flyingBananaIntervalMin: 4000,
-  flyingBananaIntervalMax: 8000,
-  flyingBananaLifetime: 6000,
+  flyingBananaIntervalMin: 2500,
+  flyingBananaIntervalMax: 5000,
+  flyingBananaLifetime: 4500,
 };
 
 const RANKS = [
@@ -131,11 +131,9 @@ const LEVEL_PLACES = {
   8: { key: 'place_surin', x: 55, y: 45 },
   9: { key: 'place_phuket', x: 22, y: 92 },
   10: { key: 'place_chiang_rai', x: 12, y: 8 },
-  11: { key: 'place_udon_thani', x: 58, y: 28 },
-  12: { key: 'place_rayong', x: 75, y: 72 },
 };
 
-const MAX_LEVEL = 12;
+const MAX_LEVEL = 10;
 
 function getPlaceForLevel(level) {
   return LEVEL_PLACES[Math.min(level, MAX_LEVEL)] || LEVEL_PLACES[MAX_LEVEL];
@@ -657,21 +655,20 @@ async function openLeaderboard() {
   if (!el.leaderboardModal) return;
   el.leaderboardModal.classList.remove('hidden');
   if (el.leaderboardDisabled) el.leaderboardDisabled.classList.add('hidden');
-  if (el.leaderboardLoading) {
-    el.leaderboardLoading.classList.remove('hidden');
-    el.leaderboardLoading.textContent = t('leaderboardLoading');
-  }
-  if (el.leaderboardList) el.leaderboardList.innerHTML = '';
+  if (el.leaderboardList) el.leaderboardList.innerHTML = '<p class="leaderboard-loading">' + t('leaderboardLoading') + '</p>';
 
   if (typeof window.wanchangthaiLeaderboard === 'undefined' || !window.wanchangthaiLeaderboard.getLeaderboard) {
-    if (el.leaderboardLoading) el.leaderboardLoading.classList.add('hidden');
     if (el.leaderboardList) el.leaderboardList.innerHTML = '';
     if (el.leaderboardDisabled) el.leaderboardDisabled.classList.remove('hidden');
     return;
   }
 
-  await refreshLeaderboardList();
-  if (el.leaderboardLoading) el.leaderboardLoading.classList.add('hidden');
+  try {
+    await refreshLeaderboardList();
+  } catch (err) {
+    console.error('Leaderboard refresh failed:', err);
+    if (el.leaderboardList) el.leaderboardList.innerHTML = '<p class="leaderboard-empty leaderboard-error">' + t('leaderboardLoadError') + '</p>';
+  }
 }
 
 function escapeHtml(text) {

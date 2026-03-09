@@ -54,6 +54,7 @@
 
     async getLeaderboard() {
       try {
+        await ensureAuth();
         // Single orderBy avoids composite index requirement; secondary sort done in JS
         const snapshot = await db
           .collection(LEADERBOARD_COLLECTION)

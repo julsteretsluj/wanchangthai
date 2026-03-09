@@ -54,25 +54,7 @@
   </div>
 
   <main class="game hidden" id="gameMain">
-    <section class="scales-panel">
-      <h2 data-i18n="yourElephant">Your elephant</h2>
-      <div class="scale-row">
-        <label for="loveBar">❤️ <span data-i18n="love">Love</span></label>
-        <div class="bar-wrap"><div class="bar love" id="loveBar" style="width: 80%"></div></div>
-        <span class="val" id="loveVal">80</span>
-      </div>
-      <div class="scale-row">
-        <label for="hungerBar">🍃 <span data-i18n="hunger">Hunger</span></label>
-        <div class="bar-wrap"><div class="bar hunger" id="hungerBar" style="width: 70%"></div></div>
-        <span class="val" id="hungerVal">70</span>
-      </div>
-      <div class="scale-row">
-        <label for="healthBar">💚 <span data-i18n="health">Health</span></label>
-        <div class="bar-wrap"><div class="bar health" id="healthBar" style="width: 90%"></div></div>
-        <span class="val" id="healthVal">90</span>
-      </div>
-    </section>
-
+    <div class="game-main">
     <section class="elephant-area">
       <div class="scene" id="scene">
         <div class="flying-bananas" id="flyingBananas" aria-label="Click bananas to collect"></div>
@@ -88,19 +70,6 @@
         </div>
       </div>
       <p class="elephant-name" id="elephantNameDisplay">Wan Chang Thai</p>
-    </section>
-
-    <section class="actions-panel">
-      <h2 data-i18n="careForElephant">Care for your elephant</h2>
-      <div class="action-buttons" id="actionButtons">
-        <button type="button" class="btn btn-feed" id="btnFeed" data-i18n="feedBtn" data-i18n-title="feedTitle">🍌 Feed</button>
-        <button type="button" class="btn btn-care" id="btnCare" data-i18n="careBtn">🩹 Care</button>
-        <button type="button" class="btn btn-love" id="btnLove" data-i18n="loveBtn">❤️ Love</button>
-        <button type="button" class="btn btn-save" id="btnSave" data-i18n="saveBtn" data-i18n-title="saveTitle">💾 Save</button>
-        <button type="button" class="btn btn-pause" id="btnPause" data-i18n="pauseBtn">⏸ Pause</button>
-        <button type="button" class="btn btn-restart" id="btnRestart" data-i18n="restartBtn">🔄 Restart</button>
-        <button type="button" class="btn btn-buy" id="btnBuyBananas" data-i18n="buyBananasBtn" data-i18n-title="buyBananasTitle">🛒 Buy 🍌</button>
-      </div>
     </section>
 
     <!-- Pause overlay (shown when game is paused) -->
@@ -124,6 +93,40 @@
     </section>
 
     <section class="message-area" id="messageArea" aria-live="polite"></section>
+    </div>
+
+    <aside class="care-sidebar">
+      <section class="scales-panel">
+        <h2 data-i18n="yourElephant">Your elephant</h2>
+        <div class="scale-row">
+          <label for="loveBar">❤️ <span data-i18n="love">Love</span></label>
+          <div class="bar-wrap"><div class="bar love" id="loveBar" style="width: 80%"></div></div>
+          <span class="val" id="loveVal">80</span>
+        </div>
+        <div class="scale-row">
+          <label for="hungerBar">🍃 <span data-i18n="hunger">Hunger</span></label>
+          <div class="bar-wrap"><div class="bar hunger" id="hungerBar" style="width: 70%"></div></div>
+          <span class="val" id="hungerVal">70</span>
+        </div>
+        <div class="scale-row">
+          <label for="healthBar">💚 <span data-i18n="health">Health</span></label>
+          <div class="bar-wrap"><div class="bar health" id="healthBar" style="width: 90%"></div></div>
+          <span class="val" id="healthVal">90</span>
+        </div>
+      </section>
+      <section class="actions-panel">
+        <h2 data-i18n="careForElephant">Care</h2>
+        <div class="action-buttons" id="actionButtons">
+          <button type="button" class="btn btn-feed" id="btnFeed" data-i18n="feedBtn" data-i18n-title="feedTitle">🍌 Feed</button>
+          <button type="button" class="btn btn-care" id="btnCare" data-i18n="careBtn">🩹 Care</button>
+          <button type="button" class="btn btn-love" id="btnLove" data-i18n="loveBtn">❤️ Love</button>
+          <button type="button" class="btn btn-save" id="btnSave" data-i18n="saveBtn" data-i18n-title="saveTitle">💾 Save</button>
+          <button type="button" class="btn btn-pause" id="btnPause" data-i18n="pauseBtn">⏸ Pause</button>
+          <button type="button" class="btn btn-restart" id="btnRestart" data-i18n="restartBtn">🔄 Restart</button>
+          <button type="button" class="btn btn-buy" id="btnBuyBananas" data-i18n="buyBananasBtn" data-i18n-title="buyBananasTitle">🛒 Buy 🍌</button>
+        </div>
+      </section>
+    </aside>
   </main>
 
   <!-- Leaderboard modal -->

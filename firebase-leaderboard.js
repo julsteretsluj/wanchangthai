@@ -46,7 +46,8 @@
         });
         return true;
       } catch (err) {
-        console.warn('Leaderboard save failed:', err);
+        console.error('Leaderboard save failed:', err.message || err);
+        if (err.code) console.error('Firebase error code:', err.code, '- Check Firebase Console setup.');
         return false;
       }
     },

@@ -1,6 +1,12 @@
 /**
  * Firebase configuration for Wan Chang Thai leaderboard
  *
+ * SAVE NOT WORKING? Common causes:
+ * - Running from file:// — Use a local server: npx serve .  or  python3 -m http.server 8000
+ * - Anonymous Auth disabled — Firebase Console → Authentication → Sign-in method → Anonymous → Enable
+ * - Firestore not created — Firebase Console → Firestore Database → Create database
+ * - Firestore rules blocking writes — Use rules below (Firestore → Rules)
+ *
  * SETUP INSTRUCTIONS:
  * 1. Go to https://console.firebase.google.com/
  * 2. Create a project (or use existing)

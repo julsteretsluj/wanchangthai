@@ -599,25 +599,55 @@ function love() {
   updateUI();
 }
 
-function saveToLeaderboard(silent = false) {
+async function saveToLeaderboard(silent = false) {
   if (typeof window.wanchangthaiLeaderboard === 'undefined' || !window.wanchangthaiLeaderboard.saveScore) {
     if (!silent) showMessage(t('msg_saveUnavailable'), 'neutral');
     return false;
   }
-  window.wanchangthaiLeaderboard.saveScore({
+  const ok = await window.wanchangthaiLeaderboard.saveScore({
     playerName: state.elephantName,
     elephantName: state.elephantName,
     merit: state.meritPoints,
     level: state.level,
     threatsDefeated: state.totalThreatsDefeated,
   });
-  if (!silent) showMessage(t('msg_saved'), 'good');
-  return true;
+  if (ok) {
+    if (el.leaderboardModal && !el.leaderboardModal.classList.contains('hidden')) {
+      await refreshLeaderboardList();
+    } else if (!silent) {
+      openLeaderboard();
+    }
+  }
+  if (!silent) {
+    if (ok) showMessage(t('msg_saved'), 'good');
+    else showMessage(t('msg_saveFailed'), 'bad');
+  }
+  return ok;
 }
 
-function manualSave() {
+async function manualSave() {
   if (state.gameOver || state.levelComplete) return;
-  saveToLeaderboard(false);
+  await saveToLeaderboard(false);
+}
+
+async function refreshLeaderboardList() {
+  if (!el.leaderboardList || typeof window.wanchangthaiLeaderboard === 'undefined' || !window.wanchangthaiLeaderboard.getLeaderboard) return;
+  const scores = await window.wanchangthaiLeaderboard.getLeaderboard();
+  if (scores.length === 0) {
+    el.leaderboardList.innerHTML = '<p class="leaderboard-empty">' + t('leaderboardEmpty') + '</p>';
+  } else {
+    el.leaderboardList.innerHTML = scores
+      .map(
+        (s) =>
+          `<div class="leaderboard-row">
+            <span class="leaderboard-rank">#${s.rank}</span>
+            <span class="leaderboard-name">${escapeHtml(s.elephantName)}</span>
+            <span class="leaderboard-merit">${s.merit} ${t('meritLabel')}</span>
+            <span class="leaderboard-level">Lv.${s.level}</span>
+          </div>`
+      )
+      .join('');
+  }
 }
 
 async function openLeaderboard() {
@@ -637,27 +667,8 @@ async function openLeaderboard() {
     return;
   }
 
-  const scores = await window.wanchangthaiLeaderboard.getLeaderboard();
+  await refreshLeaderboardList();
   if (el.leaderboardLoading) el.leaderboardLoading.classList.add('hidden');
-
-  if (scores.length === 0) {
-    if (el.leaderboardList) {
-      el.leaderboardList.innerHTML = '<p class="leaderboard-empty">' + t('leaderboardEmpty') + '</p>';
-    }
-  } else {
-    const html = scores
-      .map(
-        (s) =>
-          `<div class="leaderboard-row">
-            <span class="leaderboard-rank">#${s.rank}</span>
-            <span class="leaderboard-name">${escapeHtml(s.elephantName)}</span>
-            <span class="leaderboard-merit">${s.merit} ${t('meritLabel')}</span>
-            <span class="leaderboard-level">Lv.${s.level}</span>
-          </div>`
-      )
-      .join('');
-    if (el.leaderboardList) el.leaderboardList.innerHTML = html;
-  }
 }
 
 function escapeHtml(text) {
@@ -671,7 +682,7 @@ function closeLeaderboard() {
 }
 
 function checkGameOver() {
-  if (state.love < 50 || state.hunger < 50 || state.health < 50) {
+  if (state.love < 70 || state.hunger < 70 || state.health < 70) {
     state.gameOver = true;
     if (state.threatTimer) clearTimeout(state.threatTimer);
     if (state.threatWarningTimer) clearTimeout(state.threatWarningTimer);

@@ -88,8 +88,8 @@ const THREATS = {
     strikeKey: 'poacher_strike',
     damage: { love: 15, hunger: 10, health: 25 },
     actions: [
-      { id: 'pay', labelKey: 'poacher_pay_label', costMoney: 20, costFood: 0, resolveKey: 'poacher_pay_resolve' },
-      { id: 'food', labelKey: 'poacher_food_label', costMoney: 0, costFood: 1, resolveKey: 'poacher_food_resolve' },
+      { id: 'pay', labelKey: 'poacher_pay_label', costMoney: 40, costFood: 0, resolveKey: 'poacher_pay_resolve' },
+      { id: 'food', labelKey: 'poacher_food_label', costMoney: 0, costFood: 2, resolveKey: 'poacher_food_resolve' },
     ],
   },
   tourist: {
@@ -99,7 +99,7 @@ const THREATS = {
     damage: { love: 22, hunger: 0, health: 8 },
     actions: [
       { id: 'ask', labelKey: 'tourist_ask_label', costMoney: 0, costFood: 0, resolveKey: 'tourist_ask_resolve' },
-      { id: 'tour', labelKey: 'tourist_tour_label', costMoney: 15, costFood: 0, resolveKey: 'tourist_tour_resolve' },
+      { id: 'tour', labelKey: 'tourist_tour_label', costMoney: 25, costFood: 0, resolveKey: 'tourist_tour_resolve' },
     ],
   },
   civilian: {

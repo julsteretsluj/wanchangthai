@@ -178,6 +178,8 @@ const el = {
   btnBuyBananas: document.getElementById('btnBuyBananas'),
   btnCare: document.getElementById('btnCare'),
   btnLove: document.getElementById('btnLove'),
+  btnSave: document.getElementById('btnSave'),
+  btnSavePause: document.getElementById('btnSavePause'),
   btnPause: document.getElementById('btnPause'),
   btnResume: document.getElementById('btnResume'),
   btnRestart: document.getElementById('btnRestart'),
@@ -241,6 +243,9 @@ function updateUI() {
     el.btnPause.textContent = state.paused ? t('resumeBtn') : t('pauseBtn');
     el.btnPause.disabled = state.gameOver;
   }
+  const hasLeaderboard = typeof window.wanchangthaiLeaderboard !== 'undefined' && window.wanchangthaiLeaderboard.saveScore;
+  if (el.btnSave) el.btnSave.disabled = state.gameOver || state.levelComplete || !hasLeaderboard;
+  if (el.btnSavePause) el.btnSavePause.disabled = !hasLeaderboard;
   updateThreatButtons();
 }
 
@@ -442,7 +447,7 @@ function completeLevel() {
   if (state.flyingBananaTimer) clearTimeout(state.flyingBananaTimer);
   state.flyingBananaTimer = null;
   if (el.flyingBananas) el.flyingBananas.innerHTML = '';
-  saveToLeaderboard();
+  saveToLeaderboard(true);
   if (el.levelCompleteModal) el.levelCompleteModal.classList.remove('hidden');
   if (el.levelCompleteText) {
     const nextPlace = getPlaceForLevel(state.level + 1);
@@ -594,8 +599,11 @@ function love() {
   updateUI();
 }
 
-function saveToLeaderboard() {
-  if (typeof window.wanchangthaiLeaderboard === 'undefined' || !window.wanchangthaiLeaderboard.saveScore) return;
+function saveToLeaderboard(silent = false) {
+  if (typeof window.wanchangthaiLeaderboard === 'undefined' || !window.wanchangthaiLeaderboard.saveScore) {
+    if (!silent) showMessage(t('msg_saveUnavailable'), 'neutral');
+    return false;
+  }
   window.wanchangthaiLeaderboard.saveScore({
     playerName: state.elephantName,
     elephantName: state.elephantName,
@@ -603,6 +611,13 @@ function saveToLeaderboard() {
     level: state.level,
     threatsDefeated: state.totalThreatsDefeated,
   });
+  if (!silent) showMessage(t('msg_saved'), 'good');
+  return true;
+}
+
+function manualSave() {
+  if (state.gameOver || state.levelComplete) return;
+  saveToLeaderboard(false);
 }
 
 async function openLeaderboard() {
@@ -664,7 +679,7 @@ function checkGameOver() {
     state.flyingBananaTimer = null;
     if (el.flyingBananas) el.flyingBananas.innerHTML = '';
     if (el.threatPanel) el.threatPanel.classList.add('hidden');
-    saveToLeaderboard();
+    saveToLeaderboard(true);
     showMessage(t('gameOverMessage'), 'bad');
   }
 }
@@ -835,6 +850,8 @@ function init() {
   el.btnLove.addEventListener('click', love);
   if (el.btnNextLevel) el.btnNextLevel.addEventListener('click', startNextLevel);
   if (el.btnPause) el.btnPause.addEventListener('click', togglePause);
+  if (el.btnSave) el.btnSave.addEventListener('click', manualSave);
+  if (el.btnSavePause) el.btnSavePause.addEventListener('click', manualSave);
   if (el.btnResume) el.btnResume.addEventListener('click', resumeGame);
   if (el.btnRestart) el.btnRestart.addEventListener('click', restartGame);
   if (el.btnRestartOverlay) el.btnRestartOverlay.addEventListener('click', restartGame);

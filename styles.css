@@ -812,6 +812,11 @@ body {
   color: var(--text);
 }
 
+.btn-save {
+  background: var(--health);
+  color: white;
+}
+
 .btn-love {
   background: var(--btn-love);
   color: white;

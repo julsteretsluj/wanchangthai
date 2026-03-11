@@ -332,6 +332,15 @@ function applyTranslations() {
   if (el.btnRestartOverlay) el.btnRestartOverlay.textContent = t('restartBtn');
   if (el.btnNewPlayer) el.btnNewPlayer.textContent = t('newPlayerBtn');
   if (el.btnNewPlayerOverlay) el.btnNewPlayerOverlay.textContent = t('newPlayerBtn');
+  if (el.btnFeed) el.btnFeed.textContent = t('feedBtn');
+  if (el.btnFeedSugarCane) el.btnFeedSugarCane.textContent = t('sugarCaneBtn');
+  if (el.btnCare) el.btnCare.textContent = t('careBtn');
+  if (el.btnLove) el.btnLove.textContent = t('loveBtn');
+  if (el.btnBuyBananas) el.btnBuyBananas.textContent = t('buyBananasBtn');
+  if (el.btnBuyBananas3) el.btnBuyBananas3.textContent = t('buyBananas3Btn');
+  if (el.btnBuyBananas5) el.btnBuyBananas5.textContent = t('buyBananas5Btn');
+  if (el.btnSave) el.btnSave.textContent = t('saveBtn');
+  if (el.btnSavePause) el.btnSavePause.textContent = t('saveBtn');
 }
 
 function updateThreatButtons() {

@@ -530,7 +530,7 @@ body {
   margin-bottom: 0.4rem;
 }
 
-.care-sidebar .scale-row label {
+.care-sidebar .scale-row .scale-label {
   font-size: 0.85rem;
 }
 
@@ -581,7 +581,8 @@ body {
   margin-bottom: 0;
 }
 
-.scale-row label {
+.scale-row label,
+.scale-row .scale-label {
   font-size: 0.95rem;
   font-weight: 600;
 }

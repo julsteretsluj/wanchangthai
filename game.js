@@ -6,9 +6,9 @@
 const state = {
   lang: localStorage.getItem('wanchangthai_lang') || 'en',
   elephantName: 'Wan Chang Thai',
-  love: 80,
-  hunger: 70,
-  health: 90,
+  love: 100,
+  hunger: 100,
+  health: 100,
   money: 110,
   food: 6,
   level: 1,
@@ -825,9 +825,9 @@ function restartGame() {
   if (state.flyingBananaTimer) clearTimeout(state.flyingBananaTimer);
   state.flyingBananaTimer = null;
   if (el.flyingBananas) el.flyingBananas.innerHTML = '';
-  state.love = 80;
-  state.hunger = 70;
-  state.health = 90;
+  state.love = 100;
+  state.hunger = 100;
+  state.health = 100;
   state.money = CONFIG.startMoney;
   state.food = CONFIG.startFood;
   state.level = 1;
@@ -879,9 +879,9 @@ function newPlayerGame() {
   } catch (e) {}
   state.elephantName = 'Wan Chang Thai';
   state.meritPoints = 0;
-  state.love = 80;
-  state.hunger = 70;
-  state.health = 90;
+  state.love = 100;
+  state.hunger = 100;
+  state.health = 100;
   state.money = CONFIG.startMoney;
   state.food = CONFIG.startFood;
   state.level = 1;

@@ -357,6 +357,10 @@ body {
   border-radius: 8px;
 }
 
+.leaderboard-disabled.hidden {
+  display: none;
+}
+
 .leaderboard-row {
   display: grid;
   grid-template-columns: 2.5rem 1fr auto auto;
@@ -934,6 +938,11 @@ body {
 
 .btn-restart {
   background: #8b7355;
+  color: white;
+}
+
+.btn-new-player {
+  background: #5a7a8a;
   color: white;
 }
 

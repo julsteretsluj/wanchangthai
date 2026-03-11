@@ -54,6 +54,10 @@ const CONFIG = {
   meritPerThreatResolved: 12,
   meritPerCareAction: 2,
   bananaCost: 12,
+  bananaCost3: 32,
+  bananaCost5: 50,
+  feedSugarCaneHunger: 42,
+  feedSugarCaneLove: 10,
   flyingBananaIntervalMin: 2500,
   flyingBananaIntervalMax: 5000,
   flyingBananaLifetime: 4500,
@@ -173,7 +177,10 @@ const el = {
   threatActions: document.getElementById('threatActions'),
   actionButtons: document.getElementById('actionButtons'),
   btnFeed: document.getElementById('btnFeed'),
+  btnFeedSugarCane: document.getElementById('btnFeedSugarCane'),
   btnBuyBananas: document.getElementById('btnBuyBananas'),
+  btnBuyBananas3: document.getElementById('btnBuyBananas3'),
+  btnBuyBananas5: document.getElementById('btnBuyBananas5'),
   btnCare: document.getElementById('btnCare'),
   btnLove: document.getElementById('btnLove'),
   btnSave: document.getElementById('btnSave'),
@@ -182,6 +189,8 @@ const el = {
   btnResume: document.getElementById('btnResume'),
   btnRestart: document.getElementById('btnRestart'),
   btnRestartOverlay: document.getElementById('btnRestartOverlay'),
+  btnNewPlayer: document.getElementById('btnNewPlayer'),
+  btnNewPlayerOverlay: document.getElementById('btnNewPlayerOverlay'),
   messageArea: document.getElementById('messageArea'),
   elephant: document.getElementById('elephant'),
   bubble: document.getElementById('bubble'),
@@ -233,9 +242,18 @@ function updateUI() {
   if (el.rankDisplay) el.rankDisplay.textContent = t(rank.key);
 
   el.btnFeed.disabled = state.food < 1 || state.gameOver || state.levelComplete || state.paused;
+  if (el.btnFeedSugarCane) el.btnFeedSugarCane.disabled = state.food < 2 || state.gameOver || state.levelComplete || state.paused;
   if (el.btnBuyBananas) {
     el.btnBuyBananas.disabled = state.money < CONFIG.bananaCost || state.gameOver || state.levelComplete || state.paused;
     el.btnBuyBananas.title = t('buyBananasTitle', { cost: CONFIG.bananaCost });
+  }
+  if (el.btnBuyBananas3) {
+    el.btnBuyBananas3.disabled = state.money < CONFIG.bananaCost3 || state.gameOver || state.levelComplete || state.paused;
+    el.btnBuyBananas3.title = t('buyBananas3Title', { cost: CONFIG.bananaCost3 });
+  }
+  if (el.btnBuyBananas5) {
+    el.btnBuyBananas5.disabled = state.money < CONFIG.bananaCost5 || state.gameOver || state.levelComplete || state.paused;
+    el.btnBuyBananas5.title = t('buyBananas5Title', { cost: CONFIG.bananaCost5 });
   }
   if (el.btnPause) {
     el.btnPause.textContent = state.paused ? t('resumeBtn') : t('pauseBtn');
@@ -278,7 +296,11 @@ function applyTranslations() {
   document.querySelectorAll('[data-i18n-title]').forEach((node) => {
     const key = node.getAttribute('data-i18n-title');
     if (key) {
-      const val = key === 'buyBananasTitle' ? t(key, { cost: CONFIG.bananaCost }) : t(key);
+      let val = t(key);
+      if (key === 'buyBananasTitle') val = t(key, { cost: CONFIG.bananaCost });
+      else if (key === 'buyBananas3Title') val = t(key, { cost: CONFIG.bananaCost3 });
+      else if (key === 'buyBananas5Title') val = t(key, { cost: CONFIG.bananaCost5 });
+      else if (key === 'sugarCaneTitle') val = t(key);
       node.title = val;
       if (node.tagName === 'BUTTON') node.setAttribute('aria-label', val);
     }
@@ -308,6 +330,8 @@ function applyTranslations() {
   if (el.btnResume) el.btnResume.textContent = t('resumeBtn');
   if (el.btnRestart) el.btnRestart.textContent = t('restartBtn');
   if (el.btnRestartOverlay) el.btnRestartOverlay.textContent = t('restartBtn');
+  if (el.btnNewPlayer) el.btnNewPlayer.textContent = t('newPlayerBtn');
+  if (el.btnNewPlayerOverlay) el.btnNewPlayerOverlay.textContent = t('newPlayerBtn');
 }
 
 function updateThreatButtons() {
@@ -549,11 +573,27 @@ function resolveThreat(action) {
   }
 }
 
-function buyBananas() {
-  if (state.money < CONFIG.bananaCost || state.gameOver || state.levelComplete || state.paused) return;
-  state.money -= CONFIG.bananaCost;
-  state.food++;
-  showMessage(t('msg_buyBananas', { count: 1, cost: CONFIG.bananaCost }), 'neutral');
+function buyBananas(amount) {
+  const cost = amount === 3 ? CONFIG.bananaCost3 : amount === 5 ? CONFIG.bananaCost5 : CONFIG.bananaCost;
+  const qty = amount || 1;
+  if (state.money < cost || state.gameOver || state.levelComplete || state.paused) return;
+  state.money -= cost;
+  state.food += qty;
+  showMessage(t('msg_buyBananas', { count: qty, cost }), 'neutral');
+  updateUI();
+}
+
+function feedSugarCane() {
+  if (state.food < 2 || state.gameOver || state.levelComplete || state.paused) return;
+  state.food -= 2;
+  state.hunger = clamp(state.hunger + CONFIG.feedSugarCaneHunger);
+  state.love = clamp(state.love + CONFIG.feedSugarCaneLove);
+  state.meritPoints += CONFIG.meritPerCareAction;
+  try { localStorage.setItem('wanchangthai_merit', String(state.meritPoints)); } catch (e) {}
+  showBubble('🍃');
+  el.elephant.classList.add('happy');
+  setTimeout(() => el.elephant.classList.remove('happy'), 600);
+  showMessage(t('msg_feedSugarCane', { name: state.elephantName }), 'good');
   updateUI();
 }
 
@@ -819,6 +859,50 @@ function restartGame() {
   showMessage(t('msg_restarted'), 'good');
 }
 
+function newPlayerGame() {
+  if (state.decayInterval) clearInterval(state.decayInterval);
+  state.decayInterval = null;
+  if (state.moneyInterval) clearInterval(state.moneyInterval);
+  state.moneyInterval = null;
+  if (state.foodInterval) clearInterval(state.foodInterval);
+  state.foodInterval = null;
+  if (state.threatTimer) clearTimeout(state.threatTimer);
+  state.threatTimer = null;
+  if (state.threatWarningTimer) clearTimeout(state.threatWarningTimer);
+  state.threatWarningTimer = null;
+  if (state.flyingBananaTimer) clearTimeout(state.flyingBananaTimer);
+  state.flyingBananaTimer = null;
+  if (el.flyingBananas) el.flyingBananas.innerHTML = '';
+  try {
+    localStorage.removeItem('wanchangthai_elephant_name');
+    localStorage.removeItem('wanchangthai_merit');
+  } catch (e) {}
+  state.elephantName = 'Wan Chang Thai';
+  state.meritPoints = 0;
+  state.love = 80;
+  state.hunger = 70;
+  state.health = 90;
+  state.money = CONFIG.startMoney;
+  state.food = CONFIG.startFood;
+  state.level = 1;
+  state.threatsDefeatedThisLevel = 0;
+  state.totalThreatsDefeated = 0;
+  state.threatActive = false;
+  state.threatType = null;
+  state.gameOver = false;
+  state.levelComplete = false;
+  state.paused = false;
+  if (el.elephantNameInput) el.elephantNameInput.value = 'Wan Chang Thai';
+  if (el.elephantNameDisplay) el.elephantNameDisplay.textContent = 'Wan Chang Thai';
+  if (el.threatPanel) el.threatPanel.classList.add('hidden');
+  if (el.levelCompleteModal) el.levelCompleteModal.classList.add('hidden');
+  if (el.pauseOverlay) el.pauseOverlay.classList.add('hidden');
+  if (el.gameMain) el.gameMain.classList.add('hidden');
+  if (el.nameModal) el.nameModal.classList.remove('hidden');
+  threatsLeave();
+  updateUI();
+}
+
 function setLanguage(lang) {
   if (lang !== 'en' && lang !== 'th') return;
   state.lang = lang;
@@ -854,10 +938,12 @@ function init() {
   el.btnCare.addEventListener('click', care);
   if (el.actionButtons) {
     el.actionButtons.addEventListener('click', (e) => {
-      const btn = e.target?.closest?.('#btnBuyBananas');
-      if (btn) buyBananas();
+      const btn = e.target?.closest?.('[data-buy-bananas]');
+      if (btn) buyBananas(parseInt(btn.getAttribute('data-buy-bananas'), 10) || 1);
+      if (e.target?.closest?.('#btnFeedSugarCane')) feedSugarCane();
     });
   }
+  if (el.btnFeedSugarCane) el.btnFeedSugarCane.addEventListener('click', feedSugarCane);
   el.btnLove.addEventListener('click', love);
   if (el.btnNextLevel) el.btnNextLevel.addEventListener('click', startNextLevel);
   if (el.btnPause) el.btnPause.addEventListener('click', togglePause);
@@ -866,6 +952,8 @@ function init() {
   if (el.btnResume) el.btnResume.addEventListener('click', resumeGame);
   if (el.btnRestart) el.btnRestart.addEventListener('click', restartGame);
   if (el.btnRestartOverlay) el.btnRestartOverlay.addEventListener('click', restartGame);
+  if (el.btnNewPlayer) el.btnNewPlayer.addEventListener('click', newPlayerGame);
+  if (el.btnNewPlayerOverlay) el.btnNewPlayerOverlay.addEventListener('click', newPlayerGame);
   if (el.leaderboardBtn) el.leaderboardBtn.addEventListener('click', openLeaderboard);
   if (el.leaderboardClose) el.leaderboardClose.addEventListener('click', closeLeaderboard);
   if (el.leaderboardModal) {
